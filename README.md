@@ -47,3 +47,6 @@ echo "firewall-cmd: reload"
 echo "rabbitmq-server: start"
 systemctl start rabbitmq-server
 ```
+### Flows
+
+![flows.png](flows.png "flows.png")
