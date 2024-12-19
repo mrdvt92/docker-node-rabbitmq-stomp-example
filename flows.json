@@ -1,0 +1,352 @@
+[
+    {
+        "id": "3929e031d391343d",
+        "type": "tab",
+        "label": "RabbitMQ STOMP Example",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "985d7d800b37c96b",
+        "type": "stomp-server",
+        "server": "stomp",
+        "port": "61613",
+        "protocolversion": "1.0",
+        "vhost": "/",
+        "reconnectretries": "20",
+        "reconnectdelay": "5",
+        "name": "RabbitMQ"
+    },
+    {
+        "id": "6f0f740948c30c38",
+        "type": "stomp in",
+        "z": "3929e031d391343d",
+        "name": "subscribe to queue",
+        "server": "985d7d800b37c96b",
+        "ack": "client",
+        "topic": "/queue/example-perl",
+        "x": 110,
+        "y": 320,
+        "wires": [
+            [
+                "65be43b0cb3a3b43"
+            ]
+        ]
+    },
+    {
+        "id": "2a84613cc7ea41d7",
+        "type": "debug",
+        "z": "3929e031d391343d",
+        "name": "debug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 570,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "1a86806bcb1ab260",
+        "type": "inject",
+        "z": "3929e031d391343d",
+        "name": "event",
+        "props": [],
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 90,
+        "y": 220,
+        "wires": [
+            [
+                "7c89daf98cea7325"
+            ]
+        ]
+    },
+    {
+        "id": "aaee1b01fe9ea748",
+        "type": "stomp out",
+        "z": "3929e031d391343d",
+        "name": "publish to queue",
+        "server": "985d7d800b37c96b",
+        "topic": "/queue/example-perl",
+        "x": 600,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "bc60b726bcab7a51",
+        "type": "change",
+        "z": "3929e031d391343d",
+        "name": "build payload",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\t    \"id\":     id,\t    \"time\":   $millis()/1000,\t    \"source\": \"node-red\"\t}",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 430,
+        "y": 220,
+        "wires": [
+            [
+                "aaee1b01fe9ea748"
+            ]
+        ]
+    },
+    {
+        "id": "ab8213aca06e26ca",
+        "type": "inject",
+        "z": "3929e031d391343d",
+        "name": "start",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0",
+        "topic": "",
+        "x": 90,
+        "y": 120,
+        "wires": [
+            [
+                "d8529496065fd65f"
+            ]
+        ]
+    },
+    {
+        "id": "d8529496065fd65f",
+        "type": "change",
+        "z": "3929e031d391343d",
+        "name": "set flow.id",
+        "rules": [
+            {
+                "t": "set",
+                "p": "id",
+                "pt": "flow",
+                "to": "0",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 220,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7c89daf98cea7325",
+        "type": "change",
+        "z": "3929e031d391343d",
+        "name": "increment flow.id",
+        "rules": [
+            {
+                "t": "set",
+                "p": "id",
+                "pt": "flow",
+                "to": "$flowContext('id') + 1",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "id",
+                "pt": "msg",
+                "to": "id",
+                "tot": "flow"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 250,
+        "y": 220,
+        "wires": [
+            [
+                "bc60b726bcab7a51"
+            ]
+        ]
+    },
+    {
+        "id": "8334fbe410c65e0c",
+        "type": "stomp ack",
+        "z": "3929e031d391343d",
+        "name": "explicitly acknowledge",
+        "server": "985d7d800b37c96b",
+        "topic": "",
+        "x": 860,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "1217e4d80eb8dec5",
+        "type": "change",
+        "z": "3929e031d391343d",
+        "name": "extract messageId",
+        "rules": [
+            {
+                "t": "set",
+                "p": "messageId",
+                "pt": "msg",
+                "to": "headers.message-id",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 610,
+        "y": 540,
+        "wires": [
+            [
+                "8334fbe410c65e0c"
+            ]
+        ]
+    },
+    {
+        "id": "7087364103362d35",
+        "type": "debug",
+        "z": "3929e031d391343d",
+        "name": "last id",
+        "active": true,
+        "tosidebar": false,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload.id",
+        "statusType": "auto",
+        "x": 710,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "edfcc384fd6df12f",
+        "type": "comment",
+        "z": "3929e031d391343d",
+        "name": "Intialize flow.id on startup",
+        "info": "",
+        "x": 130,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "48fdef8986ca78c0",
+        "type": "comment",
+        "z": "3929e031d391343d",
+        "name": "Every 5s publish a message (JSON Object) to a queue on a RabbitMQ broker with STOMP protocol",
+        "info": "",
+        "x": 360,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "074be0e8cfe59d04",
+        "type": "comment",
+        "z": "3929e031d391343d",
+        "name": "Subscribe to a queue on a RabbitQM broker with STOMP protocol (with explicit acknolowgement)",
+        "info": "",
+        "x": 350,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "a4afca1ad0f6cfcd",
+        "type": "comment",
+        "z": "3929e031d391343d",
+        "name": "Handle the message (JSON Object) from the RabbitMQ broker",
+        "info": "",
+        "x": 240,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "a0be0a861bc56b6d",
+        "type": "template",
+        "z": "3929e031d391343d",
+        "name": "formatter",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "id: {{payload.id}}, delay: {{delay}} ms",
+        "output": "str",
+        "x": 580,
+        "y": 420,
+        "wires": [
+            [
+                "7087364103362d35"
+            ]
+        ]
+    },
+    {
+        "id": "65be43b0cb3a3b43",
+        "type": "change",
+        "z": "3929e031d391343d",
+        "name": "message handler",
+        "rules": [
+            {
+                "t": "set",
+                "p": "delay",
+                "pt": "msg",
+                "to": "$round(($millis()/1000 - payload.time) * 1000, 2)",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 350,
+        "y": 420,
+        "wires": [
+            [
+                "a0be0a861bc56b6d",
+                "2a84613cc7ea41d7",
+                "1217e4d80eb8dec5"
+            ]
+        ]
+    },
+    {
+        "id": "e221bababf7d0338",
+        "type": "comment",
+        "z": "3929e031d391343d",
+        "name": "Acknowledge the message on the RabbitMQ broker with STOMP protocol",
+        "info": "",
+        "x": 280,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "b7a1bb8e96d39113",
+        "type": "comment",
+        "z": "3929e031d391343d",
+        "name": "Setup: Configure RabbitMQ on a host named \"stomp\" with the STOMP protocol",
+        "info": "echo \"rabbitmq-server: enable\"\nsystemctl enable rabbitmq-server\n\necho \"rabbitmq_stomp: enable\"\n/usr/lib/rabbitmq/bin/rabbitmq-plugins enable rabbitmq_stomp\n\necho \"rabbitmq_management: enable\"\n/usr/lib/rabbitmq/bin/rabbitmq-plugins enable rabbitmq_management\n\necho \"firewall-cmd: add-port 61613 (STOMP)\"\nfirewall-cmd --permanent --add-port=61613/tcp\nsemanage port -a -t rabbitmq_port_t -p tcp 61613\n\necho \"firewall-cmd: add-port 15672 (Management)\"\n/usr/bin/firewall-cmd --permanent --add-port=15672/tcp\n\necho \"firewall-cmd: reload\"\n/usr/bin/firewall-cmd --reload\n\necho \"rabbitmq-server: start\"\nsystemctl start rabbitmq-server\n",
+        "x": 300,
+        "y": 20,
+        "wires": []
+    }
+]
